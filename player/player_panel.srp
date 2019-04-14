@@ -85,6 +85,10 @@ class Player_panel:
         if get_os() == 'windows':
             update_font(8)
 
+        ry = ry + TEXT_H + 10
+        sax_button = Button(win, "Sax", x, ry, TEXT_W, TEXT_H)
+        sax_button.method = 'sax_button_pressed'
+
     def enable_handler(obj, event, x, y)
         player_enabled = x
 

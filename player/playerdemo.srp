@@ -7,16 +7,22 @@
 SERVICE = "demo"
 
 # Now load playerbase.srp
-require "playerbase"
-load "phrase_template/sax_phrases.srp"
+require "playerbase.srp"
+require "phrase_template/sax_phrases.srp"
+require "phrase_template/drum_phrases.srp"
 
 # phrase stores the information of which music phrase (template) we are 
 # currently on, since usually a lick occupies several measures, we 
 # definitely want several measures to form a complete phrase. 
 # cur_instrument_phrase - [phrase template name, which measure it's on]
-cur_sax_phrase = [sax_phrase_0, 0]
-drum_phrase = 0
+sax_phrases = [sax_phrase_0, sax_phrase_1, sax_phrase_2, sax_phrase_3, sax_phrase_4]
+cur_sax_phrase = [sax_phrases[int(random()*5)], 0]
+
+drum_phrases = [drum_phrase_0]
+cur_drum_phrase = [drum_phrases[0], 0]
+
 piano_phrase = 0
+
 
 // some simple music generation: Here are some problems with this:
 // - not very interesting
@@ -50,20 +56,45 @@ def play_a_measure()
     #   x >= y, we write x + EPSILON > y
     if cur_style == 'rock'
 
-        measure = cur_sax_phrase[0][cur_sax_phrase[1]]
+        # get the current measure based on the cur_instr_phrase 
+        sax_measure = cur_sax_phrase[0][cur_sax_phrase[1]]
+        drum_measure = cur_drum_phrase[0][cur_drum_phrase[1]]
 
-        # play note by the library
+
+        ######### play saxophone ##################
+
+        # play saxophone note by the library
         sched_select(vtsched)
-        for note in measure
-            sched_cause(note[1], midi_out, 'note', 0, 60 + int(random() * 12), note[0], note[2])
+        if sax_flag == true
+            for note in sax_measure
+                sched_cause(note[1], midi_out, 'note', 0, 60 + int(random() * 12), note[0], note[2])
+
 
         # update the cur_sax_phrase by incrementing the measure
         # if we finished this phrase, find the next phrase (either randomly or by a probability)
-        var phrase_length = len(cur_sax_phrase[0])
-        if cur_sax_phrase[1] + 1 == phrase_length
-            cur_sax_phrase = [cur_sax_phrase[0], 0]
+        var sax_phrase_length = len(cur_sax_phrase[0])
+        if cur_sax_phrase[1] + 1 == sax_phrase_length
+            cur_sax_phrase = [sax_phrases[int(random()*5)], 0]
         else 
             cur_sax_phrase = [cur_sax_phrase[0], cur_sax_phrase[1] + 1]
+
+
+        ######### play drum ##################
+
+        # play drum by the library, note that it's in channel 10
+        sched_select(vtsched)
+        if drum_flag == true
+            for note in drum_measure
+                sched_cause(note[1], midi_out, 'note', 9, note[0], 60, 0.3)
+
+
+        # update the cur_drum_phrase by incrementing the measure
+        # if we finished this phrase, find the next phrase (either randomly or by a probability)
+        var drum_phrase_length = len(cur_drum_phrase[0])
+        if cur_drum_phrase[1] + 1 == drum_phrase_length
+            cur_drum_phrase = [drum_phrases[0], 0]
+        else 
+            cur_drum_phrase = [cur_drum_phrase[0], cur_drum_phrase[1] + 1]
 
 
         # # play something using the root of the chord (cur_bass)

@@ -12,12 +12,17 @@ APPLICATION = "cmsip"
 PITCH = 64
 CONDUCTOR = "cond"
 
-current_bps = 1 // tempo currently in effect
-base_beat_time = 0 // time of the starting beat
+current_bps = 1 # tempo currently in effect
+base_beat_time = 0 # time of the starting beat
 current_beats_per_measure = 4
 
-joined = false  // have we joined the orchestra yet?
-have_timemap = false // set when timemap is first called
+joined = false  # have we joined the orchestra yet?
+have_timemap = false # set when timemap is first called
+
+sax_flag = true # saxophone flag
+drum_flag = true # saxophone flag
+piano_flag = true # saxophone flag
+guitar_flag = true # saxophone flag
 
 def heartbeat()
     // display "heartbeat", o2_time_get(), vtsched.time, rtsched.time
@@ -268,6 +273,20 @@ def stop_handler(timestamp, address, types, beat)
 
 def chat_handler(timestamp, address, types, sent_from, message):
     chat.add_new_msg(sent_from, message)
+
+###### SUBCONDUCTOR CONTROAL ############
+def sax_button_pressed(obj, event, x, y):
+    sax_flag = not sax_flag
+
+def drum_button_pressed(obj, event, x, y):
+    drum_flag = not drum_flag
+
+def piano_button_pressed(obj, event, x, y):
+    piano_flag = not piano_flag
+
+def guitar_button_pressed(obj, event, x, y):
+    guitar_flag = not guitar_flag
+
 
 ######CHAT PROTOCOL####
 def send_private_message(receiver, msg):

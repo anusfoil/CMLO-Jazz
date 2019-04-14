@@ -1,0 +1,47 @@
+# drum_phrase.srp - the library of saxophone phrase templates and licks
+#
+# Kristin Huan Zhang
+# Apr 2019
+
+
+# templates, only contains rhythmical, articulation and dynamics information 
+# articulation will be represented in duration
+# dynamics and rhythmics (whether note is on or off) is given by velocity
+# each of the tuple is (instr, start time) since for drum I don't want to worry about loudness
+# Okay, there is no tuple in Serpent data structure, so I just use list
+# 
+# example: drum_phrase_0 is the first eight measures of https://musescore.com/user/27736638/scores/4916437 
+
+# Our drum kit: 14 wood snare, 12" rack tom and 14" floor 18" or 20" bass drums, thin cymbal, and another tasty cymbal
+
+# midi references: 
+# 51 - Ride Cymbal 1
+# 59 -  Ride Cymbal 2
+# 35 - Acoustic Bass Drum
+# 36 - Bass Drum 1
+# 38 - Acoustic Snare
+# 41 - Low Floor Tom
+# 50 - High Tom
+# 47 - Low-Mid Tom
+
+b = 35
+c = 51
+t = 47
+s = 38
+
+##### 4 beats templates ########
+
+drum_phrase_0 = [[[c, 0], [c, 1], [c, 1.5], [c, 2], [c, 3], [c, 3.5], [b, 0], [b, 3]]
+			, [[c, 0], [c, 1], [c, 1.5], [c, 2], [c, 3], [c, 3.5], [t, 3.5]]
+			, [[c, 0.5], [c, 1], [c, 1.5], [c, 2], [c, 3], [c, 3.5], [t, 0], [t, 1], [b, 0], [b, 3]]
+			, [[c, 0], [c, 1], [c, 1.5], [c, 2], [c, 3], [c, 3.5], [t, 2], [t, 2.5], [t, 3.5]]
+			, [[c, 0], [c, 1], [c, 1.5], [c, 2], [c, 3], [c, 3.5], [b, 0], [b, 3]]
+			, [[c, 0.5], [c, 1], [c, 1.5], [c, 2.5], [c, 3], [c, 3.5], [t, 0], [t, 0.5], [t, 2], [t, 2.5]]
+			, [[c, 0.5], [c, 1], [c, 1.5], [c, 2.5], [c, 3], [c, 3.5], [b, 0], [b, 3]]
+			, [[t, 0], [t, 0.33], [t, 0.66], [t, 1], [t, 1.33], [t, 1.66], [t, 2], [t, 2.33], [t, 2.66], [t, 3], [t, 3.33], [t, 3.66], [b, 0], [b, 3]]]
+
+
+##### 3 beats templates ########
+
+
+
