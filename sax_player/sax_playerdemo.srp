@@ -1,0 +1,81 @@
+# playerdemo.srp - example of a bare-bones player
+#
+# Roger B. Dannenberg
+# March 2017
+
+# IMPORTANT: SERVICE must be defined before you load playerbase.srp:
+SERVICE = "Saxophone"
+
+# Now load playerbase.srp
+require "sax_playerbase.srp"
+require "sax_phrases.srp"
+
+# phrase stores the information of which music phrase (template) we are 
+# currently on, since usually a lick occupies several measures, we 
+# definitely want several measures to form a complete phrase. 
+# cur_instrument_phrase - [phrase template name, which measure it's on]
+sax_phrases = [sax_phrase_0, sax_phrase_1, sax_phrase_2, sax_phrase_3, sax_phrase_4]
+cur_sax_phrase = [sax_phrases[int(random()*5)], 0]
+
+
+sax_count = 0
+
+// some simple music generation: Here are some problems with this:
+// - not very interesting
+// - no manual control of anything
+// - does everything: bass, chord, melody, instead of one thing
+// - all piano sounds
+// - cannot handle cur_beats_per_measure properly (assumes 4)
+// - plays absurdly fast at faster tempos
+//
+def play_a_measure()
+
+    # compute a measure using these variables:
+    #    cur_style - a symbol representing style to play (if
+    #       this is not your style, do not play)
+    #    cur_start_beat - what beat to start on if you are stopped
+    #    cur_stop_beat - what beat to stop on if you have started (you can
+    #       stop slightly late; generally you should not start any notes 
+    #       at or after tm_stop_beat but you can play a short note on 
+    #       tm_stop_beat if it is stylistically sensible.)
+    #    cur_beats_per_measure - the current time signature as an integer
+    #    cur_bps - current beats per second (the vtsched will implement this
+    #       but reading the vtsched timemap slope is not reliable because
+    #       vtsched may be updated instantaneously after this call.
+    #    cur_scale - boolean array representing current scale
+    #    cur_chord - boolean array representing current chord
+    #    cur_bass - integer representing root of chord
+    #
+    display "play_a_measure", cur_beats_per_measure, cur_bps
+    display "    ", cur_scale, cur_chord, cur_bass
+    # Use EPSILON here because comparing floats for equality is not
+    #   reliable without very difficult analysis. So, instead of
+    #   x >= y, we write x + EPSILON > y
+    if cur_style == 'rock'
+
+        # get the current measure based on the cur_instr_phrase 
+        sax_measure = cur_sax_phrase[0][cur_sax_phrase[1]]
+
+
+        ######### play saxophone ##################
+
+        # TODO:
+        # - Currently it's using random notes
+        # - We need a touchOSC control for choosing saxophone phrase patterns
+
+
+        # play saxophone note by the library
+        sched_select(vtsched)
+        for note in sax_measure
+            sched_cause(note[1], midi_out, 'note', 0, 60 + int(random() * 12), note[0], note[2])
+
+
+        # update the cur_sax_phrase by incrementing the measure
+        # if we finished this phrase, find the next phrase (either randomly or by a probability)
+        var sax_phrase_length = len(cur_sax_phrase[0])
+        if cur_sax_phrase[1] + 1 == sax_phrase_length
+            cur_sax_phrase = [sax_phrases[int(random()*5)], 0]
+        else 
+            cur_sax_phrase = [cur_sax_phrase[0], cur_sax_phrase[1] + 1]
+
+
