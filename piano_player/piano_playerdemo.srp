@@ -1,0 +1,93 @@
+# playerdemo.srp - example of a bare-bones player
+#
+# Roger B. Dannenberg
+# March 2017
+
+# IMPORTANT: SERVICE must be defined before you load playerbase.srp:
+SERVICE = "Piano"
+
+# Now load playerbase.srp
+require "piano_playerbase.srp"
+require "piano_phrases.srp"
+
+# This part currently doesn't need for piano, ignore it
+# phrase stores the information of which music phrase (template) we are 
+# currently on, since usually a lick occupies several measures, we 
+# definitely want several measures to form a complete phrase. 
+# cur_instrument_phrase - [phrase template name, which measure it's on]
+piano_phrases = [piano_phrase_0]
+cur_piano_phrase = [piano_phrases[0], 0]
+
+# decide how you play piano's chords
+mystyle = "arpeggio"
+
+// some simple music generation: Here are some problems with this:
+// - not very interesting
+// - no manual control of anything
+// - does everything: bass, chord, melody, instead of one thing
+// - all piano sounds
+// - cannot handle cur_beats_per_measure properly (assumes 4)
+// - plays absurdly fast at faster tempos
+//
+def play_a_measure()
+
+    # compute a measure using these variables:
+    #    cur_style - a symbol representing style to play (if
+    #       this is not your style, do not play)
+    #    cur_start_beat - what beat to start on if you are stopped
+    #    cur_stop_beat - what beat to stop on if you have started (you can
+    #       stop slightly late; generally you should not start any notes 
+    #       at or after tm_stop_beat but you can play a short note on 
+    #       tm_stop_beat if it is stylistically sensible.)
+    #    cur_beats_per_measure - the current time signature as an integer
+    #    cur_bps - current beats per second (the vtsched will implement this
+    #       but reading the vtsched timemap slope is not reliable because
+    #       vtsched may be updated instantaneously after this call.
+    #    cur_scale - boolean array representing current scale
+    #    cur_chord - boolean array representing current chord
+    #    cur_bass - integer representing root of chord
+    #
+    display "play_a_measure", cur_beats_per_measure, cur_bps
+    display "    ", cur_scale, cur_chord, cur_bass
+    # Use EPSILON here because comparing floats for equality is not
+    #   reliable without very difficult analysis. So, instead of
+    #   x >= y, we write x + EPSILON > y
+    if cur_style == 'rock'
+
+        # just get all the pitches in the chord
+        this_chord = [i for i = 0 to 12 if cur_chord[i]]
+
+        ######### play piano ##################
+
+        # TODO: 
+        # - Please edit the notes to be more colorful. Curretnly it's only chord notes.
+        # - I have two styles, block chords and arpeggio. Please add more creative styles so the chords don't get boring!
+        #   good reference: https://www.quora.com/What-is-generally-played-with-the-left-hand-while-improvising-jazz-on-the-piano 
+        #   If we find too many styles, just compile them into a separate patterns file like the drums
+        #   and sax, so this function doesn't get too long. 
+        #   Be careful with the beats_per_measure. 
+        # - We should have a touchOSC control that changes the piano styles! 
+
+        if mystyle == "block":        
+            # block chord style, just a plain chord on each beat
+            for i = 0 to 12
+                if cur_chord[i]
+                    for j = 0 to cur_beats_per_measure
+                        sched_cause(j, midi_out, 'note', 1, 36 + i, 35, 0.5)
+        elif mystyle == "arpeggio":
+            # arpeggio style, play notes from chord on each eighth note (twice per beat). 
+            # the pitches just iterate through the chord from low to high
+            for j = 0 to (cur_beats_per_measure * 2)
+                sched_cause(0.5 * j, midi_out, 'note', 1, 36 + this_chord[j % len(this_chord)], 45, 0.5)    
+        else:
+            pass 
+
+
+
+
+
+
+
+
+
+

@@ -4,24 +4,18 @@
 # March 2017
 
 # IMPORTANT: SERVICE must be defined before you load playerbase.srp:
-SERVICE = "demo"
+SERVICE = "Drum"
 
 # Now load playerbase.srp
-require "playerbase.srp"
-require "phrase_template/sax_phrases.srp"
-require "phrase_template/drum_phrases.srp"
+require "drum_playerbase.srp"
+require "drum_phrases.srp"
 
 # phrase stores the information of which music phrase (template) we are 
 # currently on, since usually a lick occupies several measures, we 
 # definitely want several measures to form a complete phrase. 
 # cur_instrument_phrase - [phrase template name, which measure it's on]
-sax_phrases = [sax_phrase_0, sax_phrase_1, sax_phrase_2, sax_phrase_3, sax_phrase_4]
-cur_sax_phrase = [sax_phrases[int(random()*5)], 0]
-
 drum_phrases = [drum_phrase_0]
 cur_drum_phrase = [drum_phrases[0], 0]
-
-piano_phrase = 0
 
 
 // some simple music generation: Here are some problems with this:
@@ -33,6 +27,7 @@ piano_phrase = 0
 // - plays absurdly fast at faster tempos
 //
 def play_a_measure()
+
     # compute a measure using these variables:
     #    cur_style - a symbol representing style to play (if
     #       this is not your style, do not play)
@@ -57,35 +52,18 @@ def play_a_measure()
     if cur_style == 'rock'
 
         # get the current measure based on the cur_instr_phrase 
-        sax_measure = cur_sax_phrase[0][cur_sax_phrase[1]]
         drum_measure = cur_drum_phrase[0][cur_drum_phrase[1]]
 
-
-        ######### play saxophone ##################
-
-        # play saxophone note by the library
-        sched_select(vtsched)
-        if sax_flag == true
-            for note in sax_measure
-                sched_cause(note[1], midi_out, 'note', 0, 60 + int(random() * 12), note[0], note[2])
-
-
-        # update the cur_sax_phrase by incrementing the measure
-        # if we finished this phrase, find the next phrase (either randomly or by a probability)
-        var sax_phrase_length = len(cur_sax_phrase[0])
-        if cur_sax_phrase[1] + 1 == sax_phrase_length
-            cur_sax_phrase = [sax_phrases[int(random()*5)], 0]
-        else 
-            cur_sax_phrase = [cur_sax_phrase[0], cur_sax_phrase[1] + 1]
+        # TODO:
+        # - Add touchOSC control for drum patterns
 
 
         ######### play drum ##################
 
         # play drum by the library, note that it's in channel 10
         sched_select(vtsched)
-        if drum_flag == true
-            for note in drum_measure
-                sched_cause(note[1], midi_out, 'note', 9, note[0], 60, 0.3)
+        for note in drum_measure
+            sched_cause(note[1], midi_out, 'note', 9, note[0], 60, 0.3)
 
 
         # update the cur_drum_phrase by incrementing the measure
@@ -97,26 +75,3 @@ def play_a_measure()
             cur_drum_phrase = [cur_drum_phrase[0], cur_drum_phrase[1] + 1]
 
 
-        # # play something using the root of the chord (cur_bass)
-        # midi_out.note(0, 24 + cur_bass, vel(100), 1)
-        # sched_select(vtsched)
-        # sched_cause(1, midi_out, 'note', 0, 24 + 7 + cur_bass, vel(100), 1)
-        # sched_cause(2, midi_out, 'note', 0, 24 + cur_bass, vel(100), 1)
-        # sched_cause(3, midi_out, 'note', 0, 24 + 7 + cur_bass, vel(100), 1)
-
-        # # play notes from the chord
-        # for i = 0 to 12
-        #     if cur_chord[i]
-        #         midi_out.note(0, 48 + i, vel(100), 0.5)
-        
-        # # pick a random note every 1/16 note (fast). If it's in the
-        # # scale then play it, otherwise rest. Start on 2nd beat because
-        # # we play the chord on downbeat and it might be nice to keep
-        # # chord and "melody" separate so we can hear them clearly in
-        # # this demo.
-        # for i = 0 to 12 // only 3 beats
-        #     var pitch = 60 + int(random() * 12)
-        #     if cur_scale[pitch % 12]
-        #         sched_select(vtsched)
-        #         sched_cause(1 + i * 0.25, midi_out, 'note',
-        #                       0, pitch, vel(100), 0.3)

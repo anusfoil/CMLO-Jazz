@@ -1,0 +1,9 @@
+# piano_phrases.srp - the library in which piano phrases can be found.
+# Melda Korkut
+
+#Each list contains list of lists with (velocity, start time, duration).
+# blues lick number 10
+
+piano_phrase_0 = [[ [0, 0, 2.5] , [40, 2.5, 0.5] , [50, 3, 0.5], [60, 3.5, 0.5]],
+                 [ [80, 0, 1.5], [60, 2, 0.5], [50, 2.5, 0.5], [50, 3,0.5], [40, 3.5, 0.5], [60, 4, 0.5]],
+                   [[70, 0, 0.5], [40, 0.5, 0.5], [40, 1, 0.5], [40, 1.5, 0.5], [35, 2, 2] ]]

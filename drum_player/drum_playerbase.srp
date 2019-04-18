@@ -4,7 +4,7 @@
 # Feb 27, 2017
 
 require "../cond/stage" // lots of shared code here with server
-require "player_panel"
+require "drum_player_panel"
 require "../cond/chat"
 require "http"
 
@@ -18,11 +18,6 @@ current_beats_per_measure = 4
 
 joined = false  # have we joined the orchestra yet?
 have_timemap = false # set when timemap is first called
-
-sax_flag = true # saxophone flag
-drum_flag = true # saxophone flag
-piano_flag = true # saxophone flag
-guitar_flag = true # saxophone flag
 
 def heartbeat()
     // display "heartbeat", o2_time_get(), vtsched.time, rtsched.time
@@ -118,6 +113,7 @@ def player_init()
     o2_method_new(with_service("/start"), "i", 'start_handler', true)
     o2_method_new(with_service("/stop"), "i", 'stop_handler', true)
     o2_method_new(with_service("/chat"), "ss", 'chat_handler', true)
+
     player_has_clock_sync()
 
 
@@ -273,20 +269,6 @@ def stop_handler(timestamp, address, types, beat)
 
 def chat_handler(timestamp, address, types, sent_from, message):
     chat.add_new_msg(sent_from, message)
-
-###### SUBCONDUCTOR CONTROAL ############
-def sax_button_pressed(obj, event, x, y):
-    sax_flag = not sax_flag
-
-def drum_button_pressed(obj, event, x, y):
-    drum_flag = not drum_flag
-
-def piano_button_pressed(obj, event, x, y):
-    piano_flag = not piano_flag
-
-def guitar_button_pressed(obj, event, x, y):
-    guitar_flag = not guitar_flag
-
 
 ######CHAT PROTOCOL####
 def send_private_message(receiver, msg):
