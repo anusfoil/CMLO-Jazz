@@ -1,0 +1,366 @@
+# #proj5.srp - 15-323 Project 5, using OSC sources
+# #Nina Edwards, Professor Roger Dannenberg
+
+# require "debug"
+# require "sched"
+# require "midi-io"
+# require "prefs"
+# require "mididevice"
+
+# IMPORTANT: SERVICE must be defined before you load playerbase.srp:
+# SERVICE = "Saxophone"
+
+require "prob.srp"
+require "../lib/prob.srp"
+# Now load playerbase.srp
+require "sax_playerbase.srp"
+require "sax_phrases.srp"
+# require "../OSC.srp"
+
+def full(osc_path)
+        return "/" + "proj5_NGE728" + osc_path
+        #makes full O2 path based on SERVICE
+
+def use_osc()
+
+    display "I am osc"
+
+    APPLICATION = "proj5_NGE728"
+    SERVICE = "proj5_NGE728"
+
+    o2_initialize(APPLICATION, false)
+    o2_service_new(SERVICE)
+    o2_clock_set()
+    PORT = 8037
+    result = o2_osc_port_new("proj5_NGE728", PORT, false)
+    if result != 0:
+        display "ERROR"
+    else:
+        print "Listening for TouchOSC messages on port", PORT
+
+
+    # Statictext(0, "This window is left intentionally blank.", 20, 5, 300, 30)
+
+    #installing handlers
+
+    o2_method_new(full("/1/toggle1"), "f", 'toggle1_p1', true)
+    o2_method_new(full("/1/toggle2"), "f", 'toggle2_p1', true)
+    o2_method_new(full("/1/toggle3"), "f", 'toggle3_p1', true)
+    o2_method_new(full("/1/toggle4"), "f", 'toggle4_p1', true)
+
+    o2_method_new(full("/1/fader1"), "f", 'fader1', true)
+    o2_method_new(full("/1/fader2"), "f", 'fader2', true)
+    o2_method_new(full("/1/fader3"), "f", 'fader3', true)
+    o2_method_new(full("/1/fader4"), "f", 'fader4', true)
+    o2_method_new(full("/1/fader5"), "f", 'fader5', true)
+
+    o2_method_new(full("/2/toggle1"), "f", 'toggle1_p2', true)
+    o2_method_new(full("/2/toggle2"), "f", 'toggle2_p2', true)
+    o2_method_new(full("/2/toggle3"), "f", 'toggle3_p2', true)
+    o2_method_new(full("/2/toggle4"), "f", 'toggle4_p2', true)
+
+    o2_method_new(full("/2/push1"), "f", 'push1', true)
+    o2_method_new(full("/2/push2"), "f", 'push2', true)
+    o2_method_new(full("/2/push3"), "f", 'push3', true)
+    o2_method_new(full("/2/push4"), "f", 'push4', true)
+    o2_method_new(full("/2/push5"), "f", 'push5', true)
+    o2_method_new(full("/2/push6"), "f", 'push6', true)
+    o2_method_new(full("/2/push7"), "f", 'push7', true)
+    o2_method_new(full("/2/push8"), "f", 'push8', true)
+    o2_method_new(full("/2/push9"), "f", 'push9', true)
+    o2_method_new(full("/2/push10"), "f", 'push10', true)
+    o2_method_new(full("/2/push11"), "f", 'push11', true)
+    o2_method_new(full("/2/push12"), "f", 'push12', true)
+    o2_method_new(full("/2/push13"), "f", 'push13', true)
+    o2_method_new(full("/2/push14"), "f", 'push14', true)
+    o2_method_new(full("/2/push15"), "f", 'push15', true)
+    o2_method_new(full("/2/push16"), "f", 'push16', true)
+
+    sched_init()
+    prefs = Prefs("./prefs.txt")
+    midi_devices = Midi_devices(prefs, open_later = true)
+    success = midi_devices.open_midi(latency = 10, device = 'midi_out_device')
+    if not success
+        print "Please select a valid output device and restart"
+    else
+        sched_select(vtsched)
+    sched_o2_enabled = true
+
+def toggle1_p1(timestamp, address, types, val):
+    if val == 1:
+        display "Toggle 1 on page 1 selected."
+    else:
+        display "Toggle 1 on page 1 deselected."
+
+def toggle2_p1(timestamp, address, types, val):
+    if val == 1:
+        display "Toggle 2 on page 1 selected."
+    else:
+        display "Toggle 2 on page 1 deselected."
+
+def toggle3_p1(timestamp, address, types, val):
+    if val == 1:
+        display "Toggle 3 on page 1 selected."
+    else:
+        display "Toggle 3 on page 1 deselected."
+
+def toggle4_p1(timestamp, address, types, val):
+    if val == 1:
+        display "Toggle 4 on page 1 selected."
+    else:
+        display "Toggle 4 on page 1 deselected."
+
+def fader1(timestamp, address, types, val):
+    display "Adjusting fader1 val to", val
+
+def fader2(timestamp, address, types, val):
+    display "Adjusting fader2 val to", val
+
+def fader3(timestamp, address, types, val):
+    display "Adjusting fader3 val to", val
+
+def fader4(timestamp, address, types, val):
+    display "Adjusting fader4 val to", val
+
+def fader5(timestamp, address, types, val):
+    display "Adjusting fader5 val to", val
+
+# PAGE 2
+
+def push1(timestamp, address, types, val)
+    if val == 1:
+        display "push1 pressed"
+
+def push2(timestamp, address, types, val)
+    if val == 1:
+        display "push2 pressed"
+
+def push3(timestamp, address, types, val)
+    if val == 1:
+        display "push3 pressed"
+
+def push4(timestamp, address, types, val)
+    if val == 1:
+        display "push4 pressed"
+
+def push5(timestamp, address, types, val)
+    if val == 1:
+        display "push5 pressed"
+
+def push6(timestamp, address, types, val)
+    if val == 1:
+        display "push6 pressed"
+
+def push7(timestamp, address, types, val)
+    if val == 1:
+        display "push7 pressed"
+
+def push8(timestamp, address, types, val)
+    if val == 1:
+        display "push8 pressed"
+
+def push9(timestamp, address, types, val)
+    if val == 1:
+        display "push9 pressed"
+
+def push10(timestamp, address, types, val)
+    if val == 1:
+        display "push10 pressed"
+
+def push11(timestamp, address, types, val)
+    if val == 1:
+        display "push11 pressed"
+
+def push12(timestamp, address, types, val)
+    if val == 1:
+        display "push12 pressed"
+
+def push13(timestamp, address, types, val)
+    if val == 1:
+        display "push13 pressed"
+
+def push14(timestamp, address, types, val)
+    if val == 1:
+        display "push14 pressed"
+
+def push15(timestamp, address, types, val)
+    if val == 1:
+        display "push15 pressed"
+
+def push16(timestamp, address, types, val)
+    if val == 1:
+        display "push16 pressed"
+
+def toggle1_p2(timestamp, address, types, val):
+    if val == 1:
+        display "Toggle 1 on page 2 selected."
+    else:
+        display "Toggle 1 on page 2 deselected."
+
+def toggle2_p2(timestamp, address, types, val):
+    if val == 1:
+        display "Toggle 2 on page 2 selected."
+    else:
+        display "Toggle 2 on page 2 deselected."
+
+def toggle3_p2(timestamp, address, types, val):
+    if val == 1:
+        display "Toggle 3 on page 2 selected."
+    else:
+        display "Toggle 3 on page 2 deselected."
+
+def toggle4_p2(timestamp, address, types, val):
+    if val == 1:
+        display "Toggle 4 on page 2 selected."
+    else:
+        display "Toggle 4 on page 2 deselected."
+
+# PLAYING PIANO
+
+def play_piano(cur_chord)
+    for i=0 to 12:
+        if (cur_chord[i] == "t")
+            midi_out.note(0, octave + scale + i % 12, vol, dur)
+
+########################################################
+
+# playerdemo.srp - example of a bare-bones player
+#
+# Roger B. Dannenberg
+# March 2017
+
+def play_music()
+
+    SERVICE = "Saxophone"
+    display "I am playing"
+
+    # IMPORTANT: SERVICE must be defined before you load playerbase.srp:
+    SERVICE = "Saxophone"
+
+    require "prob.srp"
+    require "../lib/prob.srp"
+    # Now load playerbase.srp
+    require "sax_playerbase.srp"
+    require "sax_phrases.srp"
+    # require "../OSC.srp"
+
+    # phrase stores the information of which music phrase (template) we are 
+    # currently on, since usually a lick occupies several measures, we 
+    # definitely want several measures to form a complete phrase. 
+    # cur_instrument_phrase - [phrase template name, which measure it's on]
+
+    global_velocity = 0.5
+
+    sax_phrases = [[sax_phrase_20, sax_phrase_21]
+                 , [sax_phrase_30, sax_phrase_31, sax_phrase_32, sax_phrase_33, sax_phrase_34, sax_phrase_35, sax_phrase_36]
+                 , [sax_phrase_40, sax_phrase_41, sax_phrase_42, sax_phrase_43, sax_phrase_44]
+                 , [sax_phrase_50, sax_phrase_51, sax_phrase_52, sax_phrase_53]
+                 , [sax_phrase_61]]
+
+    # defualt: take one of the four beat phrase
+    cur_sax_phrase = [sax_phrases[2][int(random()*5)], 0, 4]
+
+
+    ############### Markov #######################
+
+    notes = ['C' , 'C#' , 'D' , 'E-' , 'E' , 'F' , 'F#' ,'G', 'G#', 'A' , 'B-' , 'B']
+
+    markov = [[  0.04 , 0.09 , 0.17,  0.07 , 0.04  ,0.02,  0.00,  0.07 , 0.11 , 0.06  ,0.17 , 0.17],
+    [ 0.03 , 0.08  ,0.09  ,0.34,  0.06,  0.00 , 0.00 , 0.00 , 0.05 , 0.00  ,0.23 , 0.11],
+    [0.17 , 0.05,  0.03 , 0.22 , 0.08,  0.14,  0.00  ,0.09,  0.01 , 0.00 , 0.06 , 0.15],
+    [0.03 , 0.13 , 0.12 , 0.12 , 0.12 , 0.21 , 0.07 , 0.03 , 0.03 , 0.01 , 0.08 , 0.02],
+    [ 0.06 , 0.00,  0.04 , 0.12,  0.02 , 0.22 , 0.16 , 0.18,  0.16 , 0.02 , 0.00 , 0.02],
+    [0.02 , 0.06 , 0.05 , 0.28 , 0.09 , 0.02 , 0.05 , 0.23 , 0.14 , 0.00 , 0.06 , 0.00],
+    [0.04 , 0.00 , 0.09 , 0.17 , 0.04 , 0.11 , 0.04 , 0.17 , 0.13 , 0.08 , 0.08 , 0.06],
+    [0.03 , 0.01 , 0.10 , 0.08 , 0.05 , 0.16 , 0.05 , 0.14 , 0.07 , 0.08 , 0.12 , 0.12],
+    [0.11 , 0.01 , 0.00 , 0.00 , 0.00 , 0.11 , 0.06 , 0.20 , 0.08 , 0.00 , 0.35 , 0.08],
+    [0.02 , 0.00 , 0.12 , 0.00 , 0.10 , 0.00 , 0.05 , 0.37 , 0.12 , 0.10 , 0.02 , 0.10],
+    [0.04 , 0.20 , 0.03 , 0.12 , 0.02 , 0.02 , 0.10 , 0.07 , 0.16 , 0.04 , 0.08 , 0.12],
+    [0.11 , 0.05 , 0.20 , 0.01 , 0.00 , 0.00 , 0.05  , 0.11 , 0.01 , 0.18 , 0.19 , 0.08]]
+
+
+    ##############################################
+
+    // some simple music generation: Here are some problems with this:
+    // - not very interesting
+    // - no manual control of anything
+    // - does everything: bass, chord, melody, instead of one thing
+    // - all piano sounds
+    // - cannot handle cur_beats_per_measure properly (assumes 4)
+    // - plays absurdly fast at faster tempos
+    //
+
+    # compute a measure using these variables:
+    #    cur_style - a symbol representing style to play (if
+    #       this is not your style, do not play)
+    #    cur_start_beat - what beat to start on if you are stopped
+    #    cur_stop_beat - what beat to stop on if you have started (you can
+    #       stop slightly late; generally you should not start any notes 
+    #       at or after tm_stop_beat but you can play a short note on 
+    #       tm_stop_beat if it is stylistically sensible.)
+    #    cur_beats_per_measure - the current time signature as an integer
+    #    cur_bps - current beats per second (the vtsched will implement this
+    #       but reading the vtsched timemap slope is not reliable because
+    #       vtsched may be updated instantaneously after this call.
+    #    cur_scale - boolean array representing current scale
+    #    cur_chord - boolean array representing current chord
+    #    cur_bass - integer representing root of chord
+    #
+    display "play_a_measure", cur_beats_per_measure, cur_bps
+    display "    ", cur_scale, cur_chord, cur_bass
+    # Use EPSILON here because comparing floats for equality is not
+    #   reliable without very difficult analysis. So, instead of
+    #   x >= y, we write x + EPSILON > y
+    if cur_style == 'rock'
+
+        # get the current measure based on the cur_instr_phrase 
+        sax_measure = cur_sax_phrase[0][cur_sax_phrase[1]]
+
+
+        ######### play saxophone ##################
+
+        # TODO:
+        # - We need a touchOSC control for choosing saxophone phrase patterns
+
+
+        # play saxophone note by the library
+        prev = 0
+        chosen_sax_note = prev # start with middle C, we should change this in methods
+        sched_select(vtsched)
+
+        for note in sax_measure
+            sched_cause(note[1], midi_out, 'note', 0, 60 + chosen_sax_note , note[0], note[2])
+            prev = chosen_sax_note
+            chosen_sax_note = pr_markov_next(prev,markov)
+
+
+        # update the cur_sax_phrase by incrementing the measure
+        # if we finished this phrase, find the next phrase (either randomly or by a probability)
+        # or if we havn't finish the phrase, but the beat is changed
+        var sax_phrase_length = len(cur_sax_phrase[0])
+        if cur_sax_phrase[1] + 1 == sax_phrase_length or cur_beats_per_measure == cur_sax_phrase[2]
+            # sensitive to cur_bps, when faster is more inclined to use the phrases from faster pieces
+            cur_sax_phrase = [pick_new_phrase(cur_beats_per_measure, cur_bps), 0, cur_beats_per_measure]
+        else 
+            cur_sax_phrase = [cur_sax_phrase[0], cur_sax_phrase[1] + 1, cur_beats_per_measure]
+
+def pick_new_phrase(bpm, bps)
+    # get the possible phrases by the given beat per measure
+    # have options 2, 3, 4, 5, 6
+    phrase_of_beats = sax_phrases[bpm - 2]
+
+    n = len(phrase_of_beats)
+
+    # using normal distribution, pick a random phrase that fits the current tempo
+    mean = (bps - 40) / 160 * n
+    x = int(pr_normal(mean, int(n/2), 0, n))
+
+    return phrase_of_beats[x]
+
+
+
+def play_a_measure()
+    display "a measure"
+    play_music()
+    use_osc()
+

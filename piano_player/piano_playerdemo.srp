@@ -6,6 +6,7 @@
 # IMPORTANT: SERVICE must be defined before you load playerbase.srp:
 SERVICE = "Piano"
 
+require "../lib/prob.srp"
 # Now load playerbase.srp
 require "piano_playerbase.srp"
 require "piano_phrases.srp"
@@ -68,20 +69,31 @@ def play_a_measure()
         #   Be careful with the beats_per_measure. 
         # - We should have a touchOSC control that changes the piano styles! 
 
-        if mystyle == "block":        
-            # block chord style, just a plain chord on each beat
-            for i = 0 to 12
-                if cur_chord[i]
-                    for j = 0 to cur_beats_per_measure
-                        sched_cause(j, midi_out, 'note', 1, 36 + i, 35, 0.5)
-        elif mystyle == "arpeggio":
-            # arpeggio style, play notes from chord on each eighth note (twice per beat). 
-            # the pitches just iterate through the chord from low to high
-            for j = 0 to (cur_beats_per_measure * 2)
-                sched_cause(0.5 * j, midi_out, 'note', 1, 36 + this_chord[j % len(this_chord)], 45, 0.5)    
-        else:
-            pass 
+        # if mystyle == "block":        
+        #     # block chord style, just a plain chord on each beat
+        #     for i = 0 to 12
+        #         if cur_chord[i]
+        #             for j = 0 to cur_beats_per_measure
+        #                 sched_cause(j, midi_out, 'note', 1, 36 + i, 35, 0.5)
+        # elif mystyle == "arpeggio":
+        #     # arpeggio style, play notes from chord on each eighth note (twice per beat). 
+        #     # the pitches just iterate through the chord from low to high
+        #     for j = 0 to (cur_beats_per_measure * 2)
+        #         sched_cause(0.5 * j, midi_out, 'note', 1, 36 + this_chord[j % len(this_chord)], 45, 0.5)    
+        # else:
+        #     pass 
 
+        for j = 0 to cur_beats_per_measure
+            octave = get_oct()
+            for i=0 to 12:
+                if cur_chord[i]
+                    sched_cause(j, midi_out, 'note', 1, octave*12 + i, 127, 1/cur_bps)
+
+def get_oct():
+    display "getting octave"
+    prob_array = [0.05, 0.05, 0.1, 0.4, 0.2, 0.1, 0.05, 0.05]
+    rando = pr_weighted_choice(prob_array)
+    return rando
 
 
 

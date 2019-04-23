@@ -1,0 +1,135 @@
+
+########################################################
+
+# playerdemo.srp - example of a bare-bones player
+#
+# Roger B. Dannenberg
+# March 2017
+
+# IMPORTANT: SERVICE must be defined before you load playerbase.srp:
+SERVICE = "Saxophone"
+
+require "prob.srp"
+require "../lib/prob.srp"
+# Now load playerbase.srp
+require "sax_playerbase.srp"
+require "sax_phrases.srp"
+# require "../OSC.srp"
+
+# phrase stores the information of which music phrase (template) we are 
+# currently on, since usually a lick occupies several measures, we 
+# definitely want several measures to form a complete phrase. 
+# cur_instrument_phrase - [phrase template name, which measure it's on]
+
+global_velocity = 0.5
+
+sax_phrases = [[sax_phrase_20, sax_phrase_21]
+             , [sax_phrase_30, sax_phrase_31, sax_phrase_32, sax_phrase_33, sax_phrase_34, sax_phrase_35, sax_phrase_36]
+             , [sax_phrase_40, sax_phrase_41, sax_phrase_42, sax_phrase_43, sax_phrase_44]
+             , [sax_phrase_50, sax_phrase_51, sax_phrase_52, sax_phrase_53]
+             , [sax_phrase_61]]
+
+# defualt: take one of the four beat phrase
+cur_sax_phrase = [sax_phrases[2][int(random()*5)], 0, 4]
+
+def pick_new_phrase(bpm, bps)
+    # get the possible phrases by the given beat per measure
+    # have options 2, 3, 4, 5, 6
+    phrase_of_beats = sax_phrases[bpm - 2]
+
+    n = len(phrase_of_beats)
+
+    # using normal distribution, pick a random phrase that fits the current tempo
+    mean = (bps - 40) / 160 * n
+    x = int(pr_normal(mean, int(n/2), 0, n))
+
+    return phrase_of_beats[x]
+
+############### Markov #######################
+
+
+notes = ['C' , 'C#' , 'D' , 'E-' , 'E' , 'F' , 'F#' ,'G', 'G#', 'A' , 'B-' , 'B']
+
+markov = [[  0.04 , 0.09 , 0.17,  0.07 , 0.04  ,0.02,  0.00,  0.07 , 0.11 , 0.06  ,0.17 , 0.17],
+[ 0.03 , 0.08  ,0.09  ,0.34,  0.06,  0.00 , 0.00 , 0.00 , 0.05 , 0.00  ,0.23 , 0.11],
+[0.17 , 0.05,  0.03 , 0.22 , 0.08,  0.14,  0.00  ,0.09,  0.01 , 0.00 , 0.06 , 0.15],
+[0.03 , 0.13 , 0.12 , 0.12 , 0.12 , 0.21 , 0.07 , 0.03 , 0.03 , 0.01 , 0.08 , 0.02],
+[ 0.06 , 0.00,  0.04 , 0.12,  0.02 , 0.22 , 0.16 , 0.18,  0.16 , 0.02 , 0.00 , 0.02],
+[0.02 , 0.06 , 0.05 , 0.28 , 0.09 , 0.02 , 0.05 , 0.23 , 0.14 , 0.00 , 0.06 , 0.00],
+[0.04 , 0.00 , 0.09 , 0.17 , 0.04 , 0.11 , 0.04 , 0.17 , 0.13 , 0.08 , 0.08 , 0.06],
+[0.03 , 0.01 , 0.10 , 0.08 , 0.05 , 0.16 , 0.05 , 0.14 , 0.07 , 0.08 , 0.12 , 0.12],
+[0.11 , 0.01 , 0.00 , 0.00 , 0.00 , 0.11 , 0.06 , 0.20 , 0.08 , 0.00 , 0.35 , 0.08],
+[0.02 , 0.00 , 0.12 , 0.00 , 0.10 , 0.00 , 0.05 , 0.37 , 0.12 , 0.10 , 0.02 , 0.10],
+[0.04 , 0.20 , 0.03 , 0.12 , 0.02 , 0.02 , 0.10 , 0.07 , 0.16 , 0.04 , 0.08 , 0.12],
+[0.11 , 0.05 , 0.20 , 0.01 , 0.00 , 0.00 , 0.05  , 0.11 , 0.01 , 0.18 , 0.19 , 0.08]]
+
+
+##############################################
+
+// some simple music generation: Here are some problems with this:
+// - not very interesting
+// - no manual control of anything
+// - does everything: bass, chord, melody, instead of one thing
+// - all piano sounds
+// - cannot handle cur_beats_per_measure properly (assumes 4)
+// - plays absurdly fast at faster tempos
+//
+def play_a_measure()
+
+    # compute a measure using these variables:
+    #    cur_style - a symbol representing style to play (if
+    #       this is not your style, do not play)
+    #    cur_start_beat - what beat to start on if you are stopped
+    #    cur_stop_beat - what beat to stop on if you have started (you can
+    #       stop slightly late; generally you should not start any notes 
+    #       at or after tm_stop_beat but you can play a short note on 
+    #       tm_stop_beat if it is stylistically sensible.)
+    #    cur_beats_per_measure - the current time signature as an integer
+    #    cur_bps - current beats per second (the vtsched will implement this
+    #       but reading the vtsched timemap slope is not reliable because
+    #       vtsched may be updated instantaneously after this call.
+    #    cur_scale - boolean array representing current scale
+    #    cur_chord - boolean array representing current chord
+    #    cur_bass - integer representing root of chord
+    #
+    display "play_a_measure", cur_beats_per_measure, cur_bps
+    display "    ", cur_scale, cur_chord, cur_bass
+    # Use EPSILON here because comparing floats for equality is not
+    #   reliable without very difficult analysis. So, instead of
+    #   x >= y, we write x + EPSILON > y
+    if cur_style == 'rock'
+
+        # get the current measure based on the cur_instr_phrase 
+        sax_measure = cur_sax_phrase[0][cur_sax_phrase[1]]
+
+
+        ######### play saxophone ##################
+
+        # TODO:
+        # - Currently it's using random notes
+        # - We need a touchOSC control for choosing saxophone phrase patterns
+
+
+        # play saxophone note by the library
+        prev = 0
+        chosen_sax_note = prev # start with middle C, we should change this in methods
+        sched_select(vtsched)
+
+        # midi_out.program(0, 0x41)
+        for note in sax_measure
+            sched_cause(note[1], midi_out, 'note', 0, 60 + chosen_sax_note , note[0], note[2])
+            prev = chosen_sax_note
+            chosen_sax_note = pr_markov_next(prev,markov)
+
+
+        # update the cur_sax_phrase by incrementing the measure
+        # if we finished this phrase, find the next phrase (either randomly or by a probability)
+        # or if we havn't finish the phrase, but the beat is changed
+        var sax_phrase_length = len(cur_sax_phrase[0])
+        if cur_sax_phrase[1] + 1 == sax_phrase_length or cur_beats_per_measure == cur_sax_phrase[2]
+            # sensitive to cur_bps, when faster is more inclined to use the phrases from faster pieces
+            cur_sax_phrase = [pick_new_phrase(cur_beats_per_measure, cur_bps), 0, cur_beats_per_measure]
+        else 
+            cur_sax_phrase = [cur_sax_phrase[0], cur_sax_phrase[1] + 1, cur_beats_per_measure]
+
+
