@@ -4,14 +4,12 @@
 # March 2017
 
 # IMPORTANT: SERVICE must be defined before you load playerbase.srp:
-SERVICE = "Piano"
-
+SERVICE = "MNK_Piano"
 
 require "prob.srp"
 # Now load playerbase.srp
 require "piano_playerbase.srp"
 require "piano_phrases.srp"
-require "../TouchOSC.srp"
 
 # This part currently doesn't need for piano, ignore it
 # phrase stores the information of which music phrase (template) we are 
@@ -20,11 +18,9 @@ require "../TouchOSC.srp"
 # cur_instrument_phrase - [phrase template name, which measure it's on]
 piano_phrases = [piano_phrase_0]
 cur_piano_phrase = [piano_phrases[0], 0]
-prob_array = [0.01, 0.01, 0.01, 0.3, 0.5, 0.1, 0.05, 0.05]
 
 # decide how you play piano's chords
 mystyle = "arpeggio"
-random_style = [true, 0]
 
 // some simple music generation: Here are some problems with this:
 // - not very interesting
@@ -86,32 +82,26 @@ def play_a_measure()
         #         sched_cause(0.5 * j, midi_out, 'note', 1, 36 + this_chord[j % len(this_chord)], 45, 0.5)    
         # else:
         #     pass 
-        if random_style[0]
-            decider = decide()
-        else
-            decider = random_style[1]
-        display decider
+
+        decider = int(random()+0.5)
         if decider == 0
             for j = 0 to (cur_beats_per_measure * 2)
                 octave = get_oct()
                 for i=0 to 12:
                     if cur_chord[i]
-                        sched_cause(0.5 * j, midi_out, 'note', 1, 36 + this_chord[j % len(this_chord)] + 12*int(random()*3-2), 85, 0.5)
+                        sched_cause(0.5 * j, midi_out, 'note', 1, 36 + this_chord[j % len(this_chord)], 45, 0.5)
 
         else:
             for j = 0 to cur_beats_per_measure
-                midi_out.note_on(1, 72 + cur_bass,0)
+                midi_out.note_on(0, 72 + cur_bass,0)
                 octave = get_oct()
                 for i=0 to 12:
                     if cur_chord[i]
-                        sched_cause(j+0.5, midi_out, 'note', 1, octave*12 + i + 12*int(random()*3-2), 60, 1)
-                midi_out.note_on(1, 72 + cur_bass,65)
+                        sched_cause(j+0.5, midi_out, 'note', 1, octave*12 + i, 65, random())
+                midi_out.note_on(0, 72 + cur_bass,65)
 
 def get_oct():
+    display "getting octave"
+    prob_array = [0.01, 0.01, 0.01, 0.3, 0.5, 0.1, 0.05, 0.05]
     rando = pr_weighted_choice(prob_array)
     return rando
-
-def decide():
-    return int(random()+0.5)
-
-

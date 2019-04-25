@@ -1,0 +1,147 @@
+
+# require "../sax_player/sax_playerbase.srp"
+# require "../drum_player/drum_playerbase.srp"
+# require "../piano_player/piano_playerbase.srp"
+
+OSC_SERVICE = "proj5_NGE0728"
+
+def full(osc_path):
+    return "/" + OSC_SERVICE + osc_path
+    #makes full O2 path based on OSC_SERVICE
+
+o2_service_new(OSC_SERVICE)
+PORT = 8037
+result = o2_osc_port_new(OSC_SERVICE, PORT, false)
+if result != 0:
+    display "ERROR"
+else:
+    print "Listening for TouchOSC messages on port", PORT
+
+
+#installing all handlers for page 2 of simple layout
+
+
+o2_method_new(full("/2/toggle1"), "f", 'toggle1_p2', true)
+o2_method_new(full("/2/toggle2"), "f", 'toggle2_p2', true)
+o2_method_new(full("/2/toggle3"), "f", 'toggle3_p2', true)
+o2_method_new(full("/2/toggle4"), "f", 'toggle4_p2', true)
+
+o2_method_new(full("/2/push1"), "f", 'push1', true)
+o2_method_new(full("/2/push2"), "f", 'push2', true)
+o2_method_new(full("/2/push3"), "f", 'push3', true)
+o2_method_new(full("/2/push4"), "f", 'push4', true)
+o2_method_new(full("/2/push5"), "f", 'push5', true)
+o2_method_new(full("/2/push6"), "f", 'push6', true)
+o2_method_new(full("/2/push7"), "f", 'push7', true)
+o2_method_new(full("/2/push8"), "f", 'push8', true)
+o2_method_new(full("/2/push9"), "f", 'push9', true)
+o2_method_new(full("/2/push10"), "f", 'push10', true)
+o2_method_new(full("/2/push11"), "f", 'push11', true)
+o2_method_new(full("/2/push12"), "f", 'push12', true)
+o2_method_new(full("/2/push13"), "f", 'push13', true)
+o2_method_new(full("/2/push14"), "f", 'push14', true)
+o2_method_new(full("/2/push15"), "f", 'push15', true)
+o2_method_new(full("/2/push16"), "f", 'push16', true)
+
+
+def push1(timestamp, address, types, val)
+    if val == 1:
+    	set_phrase = [true, 0]
+    	display "push1 pressed"
+        
+
+def push2(timestamp, address, types, val)
+    if val == 1:
+    	set_phrase = [true, 1]
+    	display "push2 pressed"
+
+def push3(timestamp, address, types, val)
+    if val == 1:
+    	set_phrase = [true, 2]
+	    display "push3 pressed"
+
+def push4(timestamp, address, types, val)
+    if val == 1:
+    	set_phrase = [false, 0]
+    	display "push4 pressed"
+
+def push5(timestamp, address, types, val)
+    if val == 1:
+        prob_array = [0.1, 0.2, 0.5, 0.2, 0, 0, 0, 0]
+        display "push5 pressed"
+
+def push6(timestamp, address, types, val)
+    if val == 1:
+    	prob_array = [0, 0, 0, 0, 0.1, 0.2, 0.5, 0.2]
+    	display "push6 pressed"
+
+def push7(timestamp, address, types, val)
+    if val == 1:
+    	prob_array = [0.2, 0.3, 0, 0, 0, 0, 0.3, 0.2]
+    	display "push7 pressed"
+
+def push8(timestamp, address, types, val)
+    if val == 1:
+    	prob_array = [0.01, 0.01, 0.01, 0.3, 0.5, 0.1, 0.05, 0.05]
+    	display "push8 pressed"
+
+def push9(timestamp, address, types, val)
+    if val == 1:
+    	random_style = [false, 0]
+    	display "push9 pressed"
+
+def push10(timestamp, address, types, val)
+    if val == 1:
+    	random_style = [false, 1]
+    	display "push10 pressed"
+
+def push11(timestamp, address, types, val)
+    if val == 1:
+
+        display "push11 pressed"
+
+def push12(timestamp, address, types, val)
+    if val == 1:
+    	random_style[0] = true
+    	display "push12 pressed"
+
+def push13(timestamp, address, types, val)
+    if val == 1:
+        display "push13 pressed"
+
+def push14(timestamp, address, types, val)
+    if val == 1:
+        display "push14 pressed"
+
+def push15(timestamp, address, types, val)
+    if val == 1:
+        display "push15 pressed"
+
+def push16(timestamp, address, types, val)
+    if val == 1:
+        display "push16 pressed"
+
+def toggle1_p2(timestamp, address, types, val):
+    if val == 1:
+        display "Toggle 1 on page 2 selected."
+    else:
+        display "Toggle 1 on page 2 deselected."
+
+def toggle2_p2(timestamp, address, types, val):
+    if val == 1:
+        display "Toggle 2 on page 2 selected."
+    else:
+        display "Toggle 2 on page 2 deselected."
+
+def toggle3_p2(timestamp, address, types, val):
+    if val == 1:
+        display "Toggle 3 on page 2 selected."
+    else:
+        display "Toggle 3 on page 2 deselected."
+
+def toggle4_p2(timestamp, address, types, val):
+    if val == 1:
+        display "Toggle 4 on page 2 selected."
+    else:
+        display "Toggle 4 on page 2 deselected."
+

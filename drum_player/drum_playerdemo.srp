@@ -4,18 +4,38 @@
 # March 2017
 
 # IMPORTANT: SERVICE must be defined before you load playerbase.srp:
-SERVICE = "Drum"
+SERVICE = "MNK_Drum"
 
 # Now load playerbase.srp
 require "drum_playerbase.srp"
 require "drum_phrases.srp"
+require "../TouchOSC.srp"
 
 # phrase stores the information of which music phrase (template) we are 
 # currently on, since usually a lick occupies several measures, we 
 # definitely want several measures to form a complete phrase. 
 # cur_instrument_phrase - [phrase template name, which measure it's on]
-drum_phrases = [drum_phrase_0]
-cur_drum_phrase = [drum_phrases[0], 0]
+drum_phrases = [[drum_phrase_20, drum_phrase_20, drum_phrase_20, drum_phrase_20]
+              , [drum_phrase_30]
+              , [drum_phrase_40, drum_phrase_41, drum_phrase_42, drum_phrase_42]
+              , [drum_phrase_50]]
+
+# default: 4/4 beat swing
+cur_drum_phrase = [drum_phrases[2][0], 0]
+
+# whether we manually setted the phrase 
+# [bool, int] int is either 0 1 2 3
+set_phrase = [false, 0]
+
+
+def pick_new_phrase(bpmeasure)
+    # get the possible phrases by the given beat per measure
+    # have options 2, 3, 4, 5, 6
+    phrase_of_beats = drum_phrases[bpmeasure - 2]
+
+    n = len(phrase_of_beats)
+
+    return phrase_of_beats[int(random()*n)]
 
 
 // some simple music generation: Here are some problems with this:
@@ -69,9 +89,13 @@ def play_a_measure()
         # update the cur_drum_phrase by incrementing the measure
         # if we finished this phrase, find the next phrase (either randomly or by a probability)
         var drum_phrase_length = len(cur_drum_phrase[0])
-        if cur_drum_phrase[1] + 1 == drum_phrase_length
-            cur_drum_phrase = [drum_phrases[0], 0]
+        if cur_drum_phrase[1] + 1 == drum_phrase_length 
+            if set_phrase[0] == false
+                cur_drum_phrase = [pick_new_phrase(cur_beats_per_measure), 0]
+            else 
+                cur_drum_phrase = [drum_phrases[2][set_phrase[1]], 0]
         else 
             cur_drum_phrase = [cur_drum_phrase[0], cur_drum_phrase[1] + 1]
+
 
 
