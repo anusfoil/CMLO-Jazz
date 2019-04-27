@@ -18,6 +18,7 @@ require "../TouchOSC.srp"
 drum_phrases = [[drum_phrase_20, drum_phrase_20, drum_phrase_20, drum_phrase_20]
               , [drum_phrase_30]
               , [drum_phrase_40, drum_phrase_41, drum_phrase_42, drum_phrase_42]
+              , [drum_phrase_50]
               , [drum_phrase_50]]
 
 # default: 4/4 beat swing
@@ -83,7 +84,7 @@ def play_a_measure()
         # play drum by the library, note that it's in channel 10
         sched_select(vtsched)
         for note in drum_measure
-            sched_cause(note[1], midi_out, 'note', 9, note[0], 60, 0.3)
+            sched_cause(note[1], midi_out, 'note', 9, note[0], vel(60), 0.3)
 
 
         # update the cur_drum_phrase by incrementing the measure

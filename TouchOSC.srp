@@ -97,12 +97,12 @@ def push10(timestamp, address, types, val)
 
 def push11(timestamp, address, types, val)
     if val == 1:
-
+        random_style = [false, 2]
         display "push11 pressed"
 
 def push12(timestamp, address, types, val)
     if val == 1:
-    	random_style[0] = true
+    	random_style = [true, 0]
     	display "push12 pressed"
 
 def push13(timestamp, address, types, val)

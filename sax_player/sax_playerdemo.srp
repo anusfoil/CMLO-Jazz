@@ -24,7 +24,7 @@ global_velocity = 0.5
 
 sax_phrases = [[sax_phrase_20, sax_phrase_21]
              , [sax_phrase_30, sax_phrase_31, sax_phrase_32, sax_phrase_33, sax_phrase_34, sax_phrase_35, sax_phrase_36]
-             , [sax_phrase_40, sax_phrase_41, sax_phrase_42, sax_phrase_43, sax_phrase_44]
+             , [sax_phrase_40, sax_phrase_40, sax_phrase_43, sax_phrase_43, sax_phrase_44]
              , [sax_phrase_50, sax_phrase_51, sax_phrase_52, sax_phrase_53]
              , [sax_phrase_60, sax_phrase_61]]
 
@@ -113,7 +113,7 @@ def play_a_measure()
 
         # midi_out.program(0, 0x41)
         for note in sax_measure
-            sched_cause(note[1], midi_out, 'note', 0, 60 + chosen_sax_note , note[0], note[2])
+            sched_cause(note[1], midi_out, 'note', 0, 60 + chosen_sax_note, vel(note[0]), note[2]) #min(note[2], 1))
             prev = chosen_sax_note
             # adapt to the curretn scale
             temp = pr_markov_next(prev,markov)
@@ -134,7 +134,7 @@ def play_a_measure()
         # if we finished this phrase, find the next phrase (either randomly or by a probability)
         # or if we havn't finish the phrase, but the beat is changed
         var sax_phrase_length = len(cur_sax_phrase[0])
-        if cur_sax_phrase[1] + 1 == sax_phrase_length or cur_beats_per_measure == cur_sax_phrase[2]
+        if cur_sax_phrase[1] + 1 == sax_phrase_length or cur_beats_per_measure != cur_sax_phrase[2]
             # sensitive to cur_bps, when faster is more inclined to use the phrases from faster pieces
             cur_sax_phrase = [pick_new_phrase(cur_beats_per_measure, cur_bps*60), 0, cur_beats_per_measure]
         else 

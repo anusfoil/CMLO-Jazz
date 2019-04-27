@@ -4,7 +4,7 @@
 # March 2017
 
 # IMPORTANT: SERVICE must be defined before you load playerbase.srp:
-SERVICE = "MNK_Piano"
+SERVICE = "Piano"
 
 
 require "prob.srp"
@@ -12,7 +12,6 @@ require "prob.srp"
 require "piano_playerbase.srp"
 require "piano_phrases.srp"
 require "../TouchOSC.srp"
-
 # This part currently doesn't need for piano, ignore it
 # phrase stores the information of which music phrase (template) we are 
 # currently on, since usually a lick occupies several measures, we 
@@ -20,11 +19,11 @@ require "../TouchOSC.srp"
 # cur_instrument_phrase - [phrase template name, which measure it's on]
 piano_phrases = [piano_phrase_0]
 cur_piano_phrase = [piano_phrases[0], 0]
-prob_array = [0.01, 0.01, 0.01, 0.3, 0.5, 0.1, 0.05, 0.05]
 
 # decide how you play piano's chords
 mystyle = "arpeggio"
-random_style = [true, 0]
+
+decider = 2
 
 // some simple music generation: Here are some problems with this:
 // - not very interesting
@@ -86,43 +85,33 @@ def play_a_measure()
         #         sched_cause(0.5 * j, midi_out, 'note', 1, 36 + this_chord[j % len(this_chord)], 45, 0.5)    
         # else:
         #     pass 
-        if random_style[0]
-            decider = decide()
-        else
-            decider = random_style[1]
-        display decider
+
+        #decider = int(random()+0.5)
         if decider == 0
-            # arpeggio 
             for j = 0 to (cur_beats_per_measure * 2)
                 octave = get_oct()
                 for i=0 to 12:
                     if cur_chord[i]
-                        sched_cause(0.5 * j, midi_out, 'note', 1, 36 + this_chord[j % len(this_chord)] + 12*int(random()*3-2), vel(85), 0.5)
+                        sched_cause(0.5 * j, midi_out, 'note', 1, 36 + this_chord[j % len(this_chord)], 45, 0.5)
 
-        if decider == 1:
-            # chords
+        elif decider == 1:
             for j = 0 to cur_beats_per_measure
-                midi_out.note_on(1, 72 + cur_bass, vel(0))
+                midi_out.note_on(0, 72 + cur_bass,0)
                 octave = get_oct()
                 for i=0 to 12:
                     if cur_chord[i]
-                        sched_cause(j+0.5, midi_out, 'note', 1, octave*12 + i + 12*int(random()*3-2), vel(60), 1)
-                midi_out.note_on(1, 72 + cur_bass, vel(65))
-        if decider == 2:
-            # stride
-             for j = 0 to cur_beats_per_measure
+                        sched_cause(j+0.5, midi_out, 'note', 1, octave*12 + i, 65, random())
+                midi_out.note_on(0, 72 + cur_bass,65)
+        else:
+            for j = 0 to cur_beats_per_measure
                 octave = get_oct()
                 for i=0 to 12:
                     if cur_chord[i]
-                        sched_cause(2 * j, midi_out, 'note', 1, 6*12 + i, vel(65), 0.5)
-                display "playing strides"
-                sched_cause(2 * j - 1 , midi_out, 'note', 1, 3*12 + cur_bass, vel(85), 0.5)           
+                        sched_cause(2 * j, midi_out, 'note', 1, 6*12 + i, 65, 0.5)
+                sched_cause(2 * j - 1 , midi_out, 'note', 1, 3*12 + cur_bass, 85, 0.5)
 
 def get_oct():
+    display "getting octave"
+    prob_array = [0.01, 0.01, 0.01, 0.3, 0.5, 0.1, 0.05, 0.05]
     rando = pr_weighted_choice(prob_array)
     return rando
-
-def decide():
-    return int(random()*3)
-
-

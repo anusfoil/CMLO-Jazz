@@ -1,6 +1,6 @@
 debug.srp created srp.log for error report...
 runtime exception handler called
-exception is: [31;49mexpected String or Array[39;49m
+exception is: [31;49mglobal variable is unbound - drum_phrase_60[39;49m
 frame variables: {}
 frame pc: -1
 frame method: <callin_method>
@@ -10,53 +10,26 @@ Debugger invoked.
 -----------------------------------------------------
 Method [32;49m<callin_method>[39;49m in class [34;49mnil[39;49m
 -----------------------------------------------------
-Method [32;49msched_poll[39;49m in class [34;49mnil[39;49m, char 7354 in file 
-    /Users/huanzhang/serpent/lib/sched.srp
-Frame variables: {time: 196.002, period: nil}
- 169:     rtsched.poll(time)
-                      ^
------------------------------------------------------
-Method [32;49mpoll[39;49m in class [34;49mScheduler[39;49m, char 12401 in file 
-    /Users/huanzhang/serpent/lib/sched.srp
-Frame variables: {when: 196.002, event: [196, <obj@0x112e49540>, 'activate', []], target: <obj@0x112e49540>, message: 'activate', parms: []}
- 304:             general_apply(target, message, parms)
-                               ^
------------------------------------------------------
-Method [32;49mgeneral_apply[39;49m in class [34;49mnil[39;49m, char 28059 in file 
-    /Users/huanzhang/serpent/lib/sched.srp
-Frame variables: {target: <obj@0x112e49540>, message: 'activate', parms: []}
- 683:         sendapply(target, message, parms)
-                                               ^
------------------------------------------------------
-Method [32;49mactivate[39;49m in class [34;49mVscheduler[39;49m, char 20825 in file 
-    /Users/huanzhang/serpent/lib/sched.srp
-Frame variables: {event: [196, <obj@0x112ea5670>, 'beat_update', []], target: <obj@0x112ea5670>, message: 'beat_update', parms: []}
- 519:             general_apply(target, message, parms)
-                               ^
------------------------------------------------------
-Method [32;49mgeneral_apply[39;49m in class [34;49mnil[39;49m, char 28059 in file 
-    /Users/huanzhang/serpent/lib/sched.srp
-Frame variables: {target: <obj@0x112ea5670>, message: 'beat_update', parms: []}
- 683:         sendapply(target, message, parms)
-                                               ^
------------------------------------------------------
-Method [32;49mbeat_update[39;49m in class [34;49mStage[39;49m, char 3054 in file 
-    /Users/huanzhang/serpent/p5/drum_player/../cond/stage.srp
-Frame variables: {bnow: 196}
- 103:         metronome()
+Method [32;49m<immediate command 0>[39;49m in class [34;49mnil[39;49m, char 810 in file 
+    /Users/huanzhang/serpent/p5/drum_player/drum_playerdemo.srp
+  22:               , [drum_phrase_60]]
                        ^
 -----------------------------------------------------
-Method [32;49mmetronome[39;49m in class [34;49mStage[39;49m, char 3562 in file 
-    /Users/huanzhang/serpent/p5/drum_player/../cond/stage.srp
-Frame variables: {pitch: 66}
- 118:                     play_a_measure() // implemented in player only
-                                        ^
------------------------------------------------------
-Method [32;49mplay_a_measure[39;49m in class [34;49mnil[39;49m, char 2863 in file 
-    /Users/huanzhang/serpent/p5/drum_player/drum_playerdemo.srp
-Frame variables: {note: nil, drum_phrase_length: nil}
-  74:         drum_measure = cur_drum_phrase[0][cur_drum_phrase[1]]
-                                               ^
------------------------------------------------------
 Method [32;49m<callin_method>[39;49m in class [34;49mnil[39;49m
-[31;49mexpected String or Array[39;49m
+[31;49mglobal variable is unbound - drum_phrase_60[39;49m
+1> ? - stack trace
+<id> - print variable value
+* - print all variables
++ - up one level (to caller)
+- - down one level (to callee)
+=<expr> - evaluate expression
+! - exit
+> - resume execution
+1> ? - stack trace
+<id> - print variable value
+* - print all variables
++ - up one level (to caller)
+- - down one level (to callee)
+=<expr> - evaluate expression
+! - exit
+> - resume execution
