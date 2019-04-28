@@ -61,7 +61,15 @@ markov = [[  0.04 , 0.09 , 0.17,  0.07 , 0.04  ,0.02,  0.00,  0.07 , 0.11 , 0.06
 # initialize the first note in the sequence
 prev = 0
 chosen_sax_note = prev
-up = false
+
+# get a note, p is the inharmonicity factor
+def get_note(p, r)
+    temp = pr_markov_next(prev,markov)
+    while (not r[temp]) and pr_coin(1 - p)
+        temp = pr_markov_next(prev, markov)
+
+    return temp
+
 
 ##############################################
 
@@ -111,22 +119,35 @@ def play_a_measure()
         # play saxophone from the library
         sched_select(vtsched)
 
-        # midi_out.program(0, 0x41)
-        for note in sax_measure
-            sched_cause(note[1], midi_out, 'note', 0, 60 + chosen_sax_note, vel(note[0]), note[2]) #min(note[2], 1))
-            prev = chosen_sax_note
-            # adapt to the curretn scale
-            temp = pr_markov_next(prev,markov)
-            if cur_scale[temp] and (up and (temp - prev) >= 0)
-                chosen_sax_note = temp
-            else 
-                chosen_sax_note = pr_markov_next(temp, markov)
 
-            # notes has more tendency to consecutively go up 
-            if chosen_sax_note - prev >= 0
-                up = true
-            else 
-                up = false
+        # at the first beat of the measure, use a note in chord
+        chosen_sax_note = get_note(0, cur_chord)
+
+        for note in sax_measure
+
+            # When at a long note, use a note in chord
+            if note[2] > 1 
+                chosen_sax_note = get_note(0, cur_chord)
+
+            sched_cause(note[1], midi_out, 'note', 0, 60 + chosen_sax_note, vel(note[0]), note[2]) #min(note[2], 1))
+            # note off message
+            sched_cause(note[1]+note[2], midi_out, 'note', 0, 60 + chosen_sax_note, 0, note[2])
+
+            prev = chosen_sax_note
+            
+
+            chosen_sax_note = get_note(0.3, cur_scale)
+
+            # if cur_scale[temp] and (up and (temp - prev) >= 0)
+            #     chosen_sax_note = temp
+            # else 
+            #     chosen_sax_note = pr_markov_next(temp, markov)
+
+            # # notes has more tendency to consecutively go up 
+            # if chosen_sax_note - prev >= 0
+            #     up = true
+            # else 
+            #     up = false
 
 
 
